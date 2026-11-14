@@ -41,29 +41,29 @@ python server.py
 Neural-Style-Transfer1/
 │
 ├── run_app.bat         ← 🚀 1-Click launcher (starts server & opens browser)
-├── HOW_TO_RUN.md       ← 📖 Complete step-by-step user guide
-├── server.py           ← Flask backend (API + serves HTML)
-├── adain_model.py      ← VGG-19 Encoder + AdaIN Decoder architecture
-├── utils.py            ← AdaIN & mean/std helpers
-├── train_fast.py       ← High-res fine-tuning script
-├── adain_decoder.pth   ← High-Resolution WikiArt model weights
+├── HOW_TO_RUN.md       ← 📖 Complete user guide (CMD, PowerShell, Double-Click)
+├── README.md           ← 📄 Architecture & project documentation
+├── requirements.txt    ← 📦 Minimal Python dependencies
+│
+├── server.py           ← ⚡ Flask backend (API, routing & inference engine)
+├── adain_model.py      ← 🧠 VGG-19 Encoder + learned mirror Decoder
+├── utils.py            ← 📐 Core AdaIN normalization math
+├── train_fast.py       ← 🏋️ High-res fine-tuning script
+├── adain_decoder.pth   ← 🏆 Fine-tuned WikiArt model weights (14.0 MB)
 │
 ├── templates/
-│   └── index.html      ← Modern web UI (Jinja2)
+│   └── index.html      ← 🎨 NeuralStyle Studio frontend
 │
 ├── static/
-│   ├── css/style.css   ← Glassmorphism dark styling
-│   └── js/app.js       ← Frontend logic (drag & drop, live progress, previews)
+│   ├── css/style.css   ← 💎 Cyber-iris dark glassmorphic design system
+│   └── js/app.js       ← ⚡ Split slider, webcam, inspirations & filter logic
 │
 ├── data/
-│   ├── content/        ← 48 Content photos (portraits, landscapes, cities)
-│   └── style/          ← 47 Style artworks (17 genuine WikiArt masterpieces)
+│   ├── content/        ← 📸 48 diverse training content photos
+│   └── style/          ← 🖼️ 17 authentic WikiArt masterpieces + classic styles
 │
-├── output/             ← Saved stylized images
-├── uploads/            ← Temporary upload storage (auto-cleaned)
-│
-├── requirements.txt
-└── README.md
+├── output/             ← 🖼️ Generated gallery artworks
+└── uploads/            ← 📂 Temporary upload buffer (auto-cleaned)
 ```
 
 ---
