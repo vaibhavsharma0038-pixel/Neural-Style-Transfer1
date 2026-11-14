@@ -338,8 +338,9 @@ def info():
 
 # ─────────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
     print(f"\n🎨 Neural Style Transfer Web App")
     print(f"   Mode   : {'⚡ Fast (AdaIN)' if FAST_MODE else '🐢 Optimization'}")
     print(f"   Device : {DEVICE}")
-    print(f"   Open   : http://localhost:5000\n")
-    app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)
+    print(f"   Open   : http://localhost:{port}\n")
+    app.run(host="0.0.0.0", port=port, debug=False, threaded=True)
