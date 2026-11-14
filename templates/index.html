@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NeuralStyle Studio · Next-Gen AI Artistic Synthesis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+
+<!-- ░░░ BACKGROUND AMBIENCE ░░░ -->
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
+<div class="ambient-glow glow-3"></div>
+
+<!-- ░░░ NAVBAR ░░░ -->
+<header class="navbar-wrapper">
+  <nav class="navbar">
+    <a href="#" class="nav-brand">
+      <div class="brand-gem">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="m4.93 4.93 4.24 4.24"></path>
+          <path d="m14.83 9.17 4.24-4.24"></path>
+          <path d="m14.83 14.83 4.24 4.24"></path>
+          <path d="m9.17 14.83-4.24 4.24"></path>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-title">NeuralStyle</span>
+        <span class="brand-sub">Studio</span>
+      </div>
+    </a>
+
+    <div class="nav-menu">
+      <a href="#studio" class="nav-link">Studio</a>
+      <a href="#gallery" class="nav-link">Gallery</a>
+      <a href="#architecture" class="nav-link">Architecture</a>
+    </div>
+
+    <div class="nav-status">
+      <div class="status-indicator">
+        <span class="pulse-dot"></span>
+        <span class="status-label">{% if fast_mode %}AdaIN 2.0 · Ultra Fast{% else %}VGG Engine · Ready{% endif %}</span>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ░░░ HERO SECTION ░░░ -->
+<section class="hero-section">
+  <div class="container hero-container">
+    <div class="hero-badge">
+      <span class="badge-icon">✦</span>
+      <span>Next-Gen Deep Learning Image Stylization</span>
+    </div>
+
+    <h1 class="hero-headline">
+      Turn Any Photo Into an<br/>
+      <span class="gradient-text">Artistic Masterpiece</span>
+    </h1>
+
+    <p class="hero-description">
+      Harnessing deep convolutional feature statistics and Adaptive Instance Normalization to seamlessly transfer authentic brushwork and painterly textures in milliseconds.
+    </p>
+
+    <!-- Performance Chips -->
+    <div class="hero-stats-row">
+      <div class="stat-chip">
+        <span class="stat-number">VGG-19</span>
+        <span class="stat-caption">Deep Feature Extractor</span>
+      </div>
+      <div class="stat-separator"></div>
+      <div class="stat-chip">
+        <span class="stat-number">WikiArt</span>
+        <span class="stat-caption">Fine-Tuned Checkpoint</span>
+      </div>
+      <div class="stat-separator"></div>
+      <div class="stat-chip">
+        <span class="stat-number">{% if fast_mode %}&lt; 2.0s{% else %}~3 min{% endif %}</span>
+        <span class="stat-caption">Inference Latency</span>
+      </div>
+      <div class="stat-separator"></div>
+      <div class="stat-chip">
+        <span class="stat-number">{{ device.upper() }}</span>
+        <span class="stat-caption">Compute Device</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░░ STUDIO / WORKSPACE ░░░ -->
+<section class="section studio-section" id="studio">
+  <div class="container">
+    
+    <div class="section-title-wrap">
+      <h2 class="section-heading">Creative Studio</h2>
+      <p class="section-subheading">Upload your source imagery or pick an artistic masterwork to begin synthesis.</p>
+    </div>
+
+    <!-- Main Workspace Surface -->
+    <div class="studio-card">
+      
+      <!-- Studio Toolbar -->
+      <div class="studio-toolbar">
+        <!-- Alpha Intensity Slider -->
+        <div class="control-group">
+          <div class="control-label-wrap">
+            <span class="control-title">Style Blend Intensity</span>
+            <span class="control-hint">Controls how heavily painterly textures dominate</span>
+          </div>
+          <div class="slider-wrapper">
+            <input type="range" id="alpha" min="0" max="1" step="0.05" value="1.0" class="neon-slider"/>
+            <div class="slider-value-badge" id="alphaVal">100%</div>
+          </div>
+        </div>
+
+        <!-- Resolution Selector -->
+        <div class="control-group">
+          <div class="control-label-wrap">
+            <span class="control-title">Canvas Resolution</span>
+            <span class="control-hint">Output synthesis resolution</span>
+          </div>
+          <div class="chip-toggle-group" id="resolutionGroup">
+            <button type="button" class="chip-btn active" data-res="256">
+              <span class="chip-dot"></span>
+              <span>256px Standard</span>
+            </button>
+            <button type="button" class="chip-btn" data-res="512">
+              <span class="chip-dot"></span>
+              <span>512px High-Def</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Natural Color Preservation Switch -->
+        <div class="control-group">
+          <div class="control-label-wrap">
+            <span class="control-title">Color Preservation</span>
+            <span class="control-hint">Keep original photo colors while adopting style textures</span>
+          </div>
+          <label class="switch-control" for="preserveColorToggle">
+            <input type="checkbox" id="preserveColorToggle"/>
+            <span class="switch-slider"></span>
+            <span class="switch-label" id="colorToggleLabel">Natural Palette: OFF</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Upload Dropzones Grid -->
+      <div class="studio-grid">
+        
+        <!-- Content Dropzone Panel -->
+        <div class="upload-zone-panel" id="contentCard">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <span class="panel-icon">📷</span>
+              <div>
+                <h3 class="panel-title">Content Image</h3>
+                <p class="panel-sub">Provides structural shapes & geometry</p>
+              </div>
+            </div>
+            <!-- Webcam Trigger Button -->
+            <button type="button" class="btn-tool-sm" id="openWebcamBtn" title="Take a photo with your webcam">
+              <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+              <span>Take Selfie</span>
+            </button>
+          </div>
+
+          <div class="interactive-dropzone" id="contentDrop">
+            <input type="file" id="contentFile" accept="image/*" hidden/>
+            
+            <div class="dropzone-empty" onclick="document.getElementById('contentFile').click()">
+              <div class="icon-ring">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="1.75" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              </div>
+              <p class="dropzone-primary-text">Drag & drop photo here</p>
+              <p class="dropzone-secondary-text">or <span class="browse-link">browse files</span></p>
+              <div class="supported-tag">JPEG, PNG, WEBP (up to 25MB)</div>
+            </div>
+
+            <div class="dropzone-preview hidden" id="contentPreviewWrap">
+              <img id="contentPreview" class="preview-render" alt="Content source preview"/>
+              <button class="btn-remove-image" onclick="clearImage('content')" title="Remove image">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Synthesis Center Divider / Action -->
+        <div class="synthesis-node">
+          <div class="node-line"></div>
+          <div class="node-orb">
+            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"></path>
+            </svg>
+          </div>
+          <div class="node-line"></div>
+        </div>
+
+        <!-- Style Dropzone Panel -->
+        <div class="upload-zone-panel" id="styleCard">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <span class="panel-icon">🎨</span>
+              <div>
+                <h3 class="panel-title">Style Reference</h3>
+                <p class="panel-sub">Provides color palette & painterly texture</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="interactive-dropzone" id="styleDrop">
+            <input type="file" id="styleFile" accept="image/*" hidden/>
+            
+            <div class="dropzone-empty" onclick="document.getElementById('styleFile').click()">
+              <div class="icon-ring">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="1.75" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                  <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                  <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                  <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                  <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
+                </svg>
+              </div>
+              <p class="dropzone-primary-text">Drag & drop artwork here</p>
+              <p class="dropzone-secondary-text">or choose a masterwork below</p>
+              <div class="supported-tag">Any painting, drawing, or texture</div>
+            </div>
+
+            <div class="dropzone-preview hidden" id="stylePreviewWrap">
+              <img id="stylePreview" class="preview-render" alt="Style reference preview"/>
+              <button class="btn-remove-image" onclick="clearImage('style')" title="Remove image">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Masterpiece Inspiration Pills -->
+          <div class="style-inspiration-section">
+            <div class="inspiration-header">
+              <span class="inspiration-title">⚡ Quick Masterpiece Inspirations:</span>
+            </div>
+            <div class="inspiration-scroll-row">
+              <button type="button" class="art-pill" data-file="wikiart_vangogh_starry_night.jpg" data-name="Starry Night" data-artist="Van Gogh">
+                <span class="art-pill-emoji">🌌</span>
+                <span class="art-pill-name">Starry Night</span>
+                <span class="art-pill-sub">Van Gogh</span>
+              </button>
+              <button type="button" class="art-pill" data-file="wikiart_klimt_the_kiss.jpg" data-name="The Kiss" data-artist="Klimt">
+                <span class="art-pill-emoji">✨</span>
+                <span class="art-pill-name">The Kiss</span>
+                <span class="art-pill-sub">Klimt</span>
+              </button>
+              <button type="button" class="art-pill" data-file="wikiart_monet_water_lilies.jpg" data-name="Water Lilies" data-artist="Monet">
+                <span class="art-pill-emoji">🌊</span>
+                <span class="art-pill-name">Water Lilies</span>
+                <span class="art-pill-sub">Monet</span>
+              </button>
+              <button type="button" class="art-pill" data-file="wikiart_munch_the_scream.jpg" data-name="The Scream" data-artist="Munch">
+                <span class="art-pill-emoji">😱</span>
+                <span class="art-pill-name">The Scream</span>
+                <span class="art-pill-sub">Munch</span>
+              </button>
+              <button type="button" class="art-pill" data-file="wikiart_kandinsky_composition_vii.jpg" data-name="Composition VII" data-artist="Kandinsky">
+                <span class="art-pill-emoji">🎨</span>
+                <span class="art-pill-name">Composition VII</span>
+                <span class="art-pill-sub">Kandinsky</span>
+              </button>
+              <button type="button" class="art-pill" data-file="wikiart_dali_persistence_memory.jpg" data-name="Persistence" data-artist="Dalí">
+                <span class="art-pill-emoji">⏳</span>
+                <span class="art-pill-name">Persistence</span>
+                <span class="art-pill-sub">Dalí</span>
+              </button>
+              <button type="button" class="art-pill" data-file="wikiart_pollock_convergence.jpg" data-name="Convergence" data-artist="Pollock">
+                <span class="art-pill-emoji">💥</span>
+                <span class="art-pill-name">Convergence</span>
+                <span class="art-pill-sub">Pollock</span>
+              </button>
+              <button type="button" class="art-pill" data-file="wikiart_mondrian_broadway.jpg" data-name="Broadway" data-artist="Mondrian">
+                <span class="art-pill-emoji">🟦</span>
+                <span class="art-pill-name">Broadway</span>
+                <span class="art-pill-sub">Mondrian</span>
+              </button>
+              <button type="button" class="art-pill" data-file="wikiart_picasso_avignon.jpg" data-name="Les Demoiselles" data-artist="Picasso">
+                <span class="art-pill-emoji">🎭</span>
+                <span class="art-pill-name">Les Demoiselles</span>
+                <span class="art-pill-sub">Picasso</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Synthesis Action Trigger -->
+      <div class="studio-footer">
+        <button class="btn-synthesize" id="generateBtn" onclick="startTransfer()" disabled>
+          <div class="btn-shimmer"></div>
+          <span class="btn-icon" id="btnIcon">⚡</span>
+          <span class="btn-text" id="btnText">Synthesize Stylized Artwork</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Live Execution Stream Progress -->
+    <div class="progress-container hidden" id="progressWrap">
+      <div class="progress-card">
+        <div class="progress-status-bar">
+          <div class="status-indicator-group">
+            <div class="status-spinner"></div>
+            <span class="status-message" id="progressStatus">Initializing Neural Network...</span>
+          </div>
+          <span class="progress-percentage" id="progressPct">0%</span>
+        </div>
+
+        <div class="progress-meter">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="pipeline-milestones">
+          <div class="milestone-badge" id="step1">
+            <span class="milestone-dot"></span>
+            <span>Feature Mapping</span>
+          </div>
+          <div class="milestone-badge" id="step2">
+            <span class="milestone-dot"></span>
+            <span>AdaIN Normalization</span>
+          </div>
+          <div class="milestone-badge" id="step3">
+            <span class="milestone-dot"></span>
+            <span>Decoder Reconstruction</span>
+          </div>
+          <div class="milestone-badge" id="step4">
+            <span class="milestone-dot"></span>
+            <span>Final Render</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result Display Showcase -->
+    <div class="result-showcase hidden" id="resultWrap">
+      <div class="result-header-bar">
+        <div class="result-title-group">
+          <span class="celebration-badge">✨ Synthesis Complete</span>
+          <h3 class="result-heading">Stylized Output</h3>
+        </div>
+        
+        <!-- View Mode Switcher -->
+        <div class="view-mode-tabs">
+          <button type="button" class="view-tab active" data-mode="slider">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+              <path d="M18 4v16M6 4v16M12 2v20M8 8l-4 4 4 4M16 8l4 4-4 4"></path>
+            </svg>
+            <span>Split Slider</span>
+          </button>
+          <button type="button" class="view-tab" data-mode="grid">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Side-by-Side</span>
+          </button>
+        </div>
+
+        <div class="result-meta" id="resultTime"></div>
+      </div>
+
+      <!-- VIEW 1: Interactive Before / After Split Slider -->
+      <div class="split-slider-container" id="sliderViewContainer">
+        <div class="comparison-slider" id="compSlider">
+          <!-- Background: Content Photo -->
+          <div class="slider-image-layer under-layer">
+            <img id="sliderContentImg" alt="Original Content"/>
+            <div class="layer-badge badge-left">Original Photo</div>
+          </div>
+
+          <!-- Foreground: Stylized Artwork (clipped) -->
+          <div class="slider-image-layer over-layer" id="sliderOverLayer">
+            <img id="sliderResultImg" alt="Stylized Output"/>
+            <div class="layer-badge badge-right">Stylized Artwork</div>
+          </div>
+
+          <!-- Draggable Divider Line & Handle -->
+          <div class="slider-divider" id="sliderDivider">
+            <div class="divider-handle">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <p class="slider-tip">Drag the vertical bar or swipe across to compare original photo vs AI artwork</p>
+      </div>
+
+      <!-- VIEW 2: Side-by-Side Grid -->
+      <div class="comparison-grid hidden" id="gridViewContainer">
+        <!-- Content Reference Preview -->
+        <div class="comparison-card">
+          <div class="card-caption">
+            <span class="caption-dot"></span>
+            <span>Original Content</span>
+          </div>
+          <div class="image-frame">
+            <img id="resultContent" alt="Content source photo"/>
+          </div>
+        </div>
+
+        <!-- Centerpiece Stylized Output -->
+        <div class="comparison-card centerpiece-card">
+          <div class="card-caption">
+            <span class="caption-dot centerpiece-dot"></span>
+            <span>AI Synthesized Artwork</span>
+          </div>
+          <div class="image-frame centerpiece-frame">
+            <img id="resultOutput" alt="Synthesized artistic output"/>
+          </div>
+        </div>
+
+        <!-- Style Reference Preview -->
+        <div class="comparison-card">
+          <div class="card-caption">
+            <span class="caption-dot"></span>
+            <span>Style Reference</span>
+          </div>
+          <div class="image-frame">
+            <img id="resultStyle" alt="Style reference painting"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Art Lab (Post-Processing Filter Adjustments) -->
+      <div class="art-lab-panel">
+        <div class="art-lab-header">
+          <div class="art-lab-title">
+            <span class="art-lab-icon">✨</span>
+            <span class="art-lab-text">Art Studio Fine-Tuning</span>
+          </div>
+          <button type="button" class="btn-text-action" id="resetFiltersBtn">↺ Reset Adjustments</button>
+        </div>
+
+        <div class="art-lab-sliders">
+          <div class="filter-control">
+            <div class="filter-label-row">
+              <span>Brightness</span>
+              <span id="brightnessVal">100%</span>
+            </div>
+            <input type="range" id="filterBrightness" min="60" max="140" value="100" class="neon-slider-sm"/>
+          </div>
+
+          <div class="filter-control">
+            <div class="filter-label-row">
+              <span>Contrast</span>
+              <span id="contrastVal">100%</span>
+            </div>
+            <input type="range" id="filterContrast" min="60" max="150" value="100" class="neon-slider-sm"/>
+          </div>
+
+          <div class="filter-control">
+            <div class="filter-label-row">
+              <span>Saturation</span>
+              <span id="saturateVal">100%</span>
+            </div>
+            <input type="range" id="filterSaturate" min="40" max="180" value="100" class="neon-slider-sm"/>
+          </div>
+
+          <div class="filter-control">
+            <div class="filter-label-row">
+              <span>Warmth</span>
+              <span id="warmthVal">0%</span>
+            </div>
+            <input type="range" id="filterWarmth" min="0" max="80" value="0" class="neon-slider-sm"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Toolbar -->
+      <div class="result-action-bar">
+        <a id="downloadBtn" class="btn-action-primary" download="stylized_artwork.png">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Download Ultra-Res PNG</span>
+        </a>
+
+        <button class="btn-action-secondary" id="copyClipboardBtn" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span id="copyText">Copy Image</span>
+        </button>
+
+        <button class="btn-action-secondary" id="openLightboxBtn" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            <line x1="11" y1="8" x2="11" y2="14"></line>
+            <line x1="8" y1="11" x2="14" y2="11"></line>
+          </svg>
+          <span>Fullscreen Zoom</span>
+        </button>
+
+        <button class="btn-action-secondary" onclick="resetForm()" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
+          <span>New Stylization</span>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ░░░ WEBCAM CAPTURE MODAL ░░░ -->
+<div class="modal-overlay hidden" id="webcamModal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <div class="modal-title-group">
+        <span class="modal-icon">📸</span>
+        <h3 class="modal-title">Live Webcam Capture</h3>
+      </div>
+      <button type="button" class="modal-close" id="closeWebcamBtn">✕</button>
+    </div>
+
+    <div class="webcam-viewport">
+      <video id="webcamVideo" autoplay playsinline></video>
+      <div class="camera-reticle"></div>
+      <canvas id="webcamCanvas" hidden></canvas>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-action-secondary" id="cancelWebcamBtn">Cancel</button>
+      <button type="button" class="btn-action-primary" id="captureWebcamBtn">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+          <circle cx="12" cy="12" r="10"></circle>
+          <circle cx="12" cy="12" r="3" fill="currentColor"></circle>
+        </svg>
+        <span>Snap Photo</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ░░░ FULLSCREEN LIGHTBOX MODAL ░░░ -->
+<div class="modal-overlay hidden" id="lightboxModal">
+  <div class="lightbox-dialog">
+    <button type="button" class="lightbox-close" id="closeLightboxBtn">✕</button>
+    <div class="lightbox-content">
+      <img id="lightboxImg" alt="Enlarged Artwork"/>
+    </div>
+  </div>
+</div>
+
+<!-- ░░░ RECENT CREATIONS GALLERY ░░░ -->
+<section class="section gallery-section" id="gallery">
+  <div class="container">
+    <div class="section-title-wrap">
+      <h2 class="section-heading">Creations Gallery</h2>
+      <p class="section-subheading">Recently synthesized artistic outputs from this studio.</p>
+    </div>
+
+    <div class="gallery-container" id="galleryGrid">
+      {% for img in gallery %}
+      <div class="gallery-tile">
+        <img src="/gallery/{{ img }}" alt="{{ img }}" loading="lazy"/>
+        <div class="gallery-hover-scrim">
+          <a href="/download/{{ img.replace('.png','') }}" class="tile-download-btn">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Download</span>
+          </a>
+        </div>
+      </div>
+      {% else %}
+      <div class="gallery-empty-state">
+        <div class="empty-icon">🎨</div>
+        <p class="empty-title">No outputs synthesized yet</p>
+        <p class="empty-subtitle">Upload your images above to generate your first digital artwork!</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ░░░ DEEP LEARNING ARCHITECTURE ░░░ -->
+<section class="section architecture-section" id="architecture">
+  <div class="container">
+    <div class="section-title-wrap">
+      <h2 class="section-heading">Neural Architecture</h2>
+      <p class="section-subheading">Real-time arbitrary artistic synthesis powered by deep neural representations.</p>
+    </div>
+
+    <div class="architecture-grid">
+      <div class="arch-card">
+        <div class="arch-icon-wrap icon-purple">
+          <span>01</span>
+        </div>
+        <h3 class="arch-title">VGG-19 Encoder</h3>
+        <p class="arch-desc">
+          A deep 19-layer convolutional network extracts multi-scale spatial and textural activations up to the <code>relu4_1</code> layer, separating pictorial content from surface style.
+        </p>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-icon-wrap icon-cyan">
+          <span>02</span>
+        </div>
+        <h3 class="arch-title">AdaIN Transformation</h3>
+        <p class="arch-desc">
+          Adaptive Instance Normalization shifts the mean and variance of the content features to match the statistical profile of the style feature maps without altering structural topology.
+        </p>
+        <div class="code-pill">
+          <code>t = σ(s) · (f_c − μ(f_c)) / σ(f_c) + μ(s)</code>
+        </div>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-icon-wrap icon-emerald">
+          <span>03</span>
+        </div>
+        <h3 class="arch-title">Mirror Decoder</h3>
+        <p class="arch-desc">
+          An inverted convolutional network trained with Reflection Padding and Nearest-Neighbor upsampling reconstructs the transformed feature statistics back into pristine RGB pixels.
+        </p>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-icon-wrap icon-amber">
+          <span>04</span>
+        </div>
+        <h3 class="arch-title">Gram Correlation Loss</h3>
+        <p class="arch-desc">
+          Multi-layer Gram matrix loss across <code>relu1_1</code> through <code>relu5_1</code> guides the decoder to faithfully emulate the brushstroke frequency and color harmony of master artists.
+        </p>
+      </div>
+    </div>
+
+    <!-- Author & Engineer Card -->
+    <div class="engineer-card">
+      <div class="engineer-avatar">VS</div>
+      <div class="engineer-info">
+        <div class="engineer-name">Vaibhav Sharma</div>
+        <div class="engineer-role">Artificial Intelligence & Machine Learning · B.Tech Computer Science</div>
+        <div class="engineer-tags">
+          <span class="tag-chip">PyTorch 2.x</span>
+          <span class="tag-chip">Computer Vision</span>
+          <span class="tag-chip">Generative Neural Networks</span>
+          <span class="tag-chip">AdaIN</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░░ FOOTER ░░░ -->
+<footer class="studio-footer-global">
+  <div class="container footer-content">
+    <div class="footer-left">
+      <span class="footer-brand">NeuralStyle Studio</span>
+      <span class="footer-sep">·</span>
+      <span class="footer-copy">Autonomous Neural Art Synthesis Engine</span>
+    </div>
+    <div class="footer-right">
+      <span>Developed by <strong>Vaibhav Sharma</strong></span>
+    </div>
+  </div>
+</footer>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>
