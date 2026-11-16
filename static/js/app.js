@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupArtLabFilters();
   setupExportTools();
   setupSmoothScrolling();
+  setupThemeAndMode();
   updateGenerateButtonState();
 });
 
@@ -647,4 +648,115 @@ function setupSmoothScrolling() {
       }
     });
   });
+}
+
+// ── Theme & Dark/Light Mode Controller ──────────────────────────────────────
+function applyTheme(theme) {
+  const validThemes = ["purple", "cyan", "emerald", "sunset", "rose"];
+  if (!validThemes.includes(theme)) theme = "purple";
+  document.documentElement.setAttribute("data-theme", theme);
+  try {
+    localStorage.setItem("nst-theme", theme);
+  } catch (err) {}
+
+  document.querySelectorAll(".swatch-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.theme === theme);
+  });
+}
+
+function applyMode(mode) {
+  const isLight = mode === "light";
+  const normalized = isLight ? "light" : "dark";
+  document.documentElement.setAttribute("data-mode", normalized);
+  document.documentElement.style.colorScheme = normalized;
+  try {
+    localStorage.setItem("nst-mode", normalized);
+  } catch (err) {}
+
+  const moonIcon = document.querySelector(".icon-moon");
+  const sunIcon = document.querySelector(".icon-sun");
+  const modeLabel = document.querySelector(".mode-label");
+
+  if (moonIcon && sunIcon) {
+    if (isLight) {
+      moonIcon.classList.add("hidden");
+      sunIcon.classList.remove("hidden");
+    } else {
+      moonIcon.classList.remove("hidden");
+      sunIcon.classList.add("hidden");
+    }
+  }
+  if (modeLabel) {
+    modeLabel.textContent = isLight ? "Light" : "Dark";
+  }
+}
+
+// Run immediate theme/mode initialization before DOM loads to prevent visual flash
+(() => {
+  try {
+    const savedTheme = localStorage.getItem("nst-theme") || "purple";
+    const savedMode = localStorage.getItem("nst-mode") || "dark";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+    document.documentElement.setAttribute("data-mode", savedMode);
+    document.documentElement.style.colorScheme = savedMode;
+  } catch (e) {}
+})();
+
+function setupThemeAndMode() {
+  let savedTheme = "purple";
+  let savedMode = "dark";
+  try {
+    savedTheme = localStorage.getItem("nst-theme") || "purple";
+    savedMode = localStorage.getItem("nst-mode") || "dark";
+  } catch (e) {}
+
+  applyTheme(savedTheme);
+  applyMode(savedMode);
+
+  // Swatch buttons
+  document.querySelectorAll(".swatch-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const theme = btn.dataset.theme;
+      if (theme) {
+        applyTheme(theme);
+      }
+    });
+  });
+
+  // Theme dropdown trigger
+  const themePickerBtn = $("themePickerBtn");
+  const themeDropdown = $("themeDropdown");
+
+  if (themePickerBtn && themeDropdown) {
+    themePickerBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      themeDropdown.classList.toggle("hidden");
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!themeDropdown.contains(e.target) && !themePickerBtn.contains(e.target)) {
+        themeDropdown.classList.add("hidden");
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        themeDropdown.classList.add("hidden");
+      }
+    });
+  }
+
+  // Dark / Light Mode toggle button
+  const modeToggleBtn = $("modeToggleBtn");
+  if (modeToggleBtn) {
+    modeToggleBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const currentMode = document.documentElement.getAttribute("data-mode") || "dark";
+      const nextMode = currentMode === "dark" ? "light" : "dark";
+      applyMode(nextMode);
+    });
+  }
 }
