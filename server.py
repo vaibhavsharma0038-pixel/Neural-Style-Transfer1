@@ -40,6 +40,9 @@ FAST_MODE  = os.path.exists(DECODER_PATH)
 # Global job store  { job_id: {status, progress, message, result_path} }
 jobs = {}
 
+# Model readiness flag — set to True after background warm-up completes
+_model_ready = False
+
 print(f"[server] Device    : {DEVICE}")
 print(f"[server] Default Sz: {IMAGE_SIZE}")
 print(f"[server] Fast mode : {FAST_MODE}")
@@ -78,6 +81,7 @@ def preserve_content_color(content_pil, stylized_pil):
 _vgg = None
 _encoder = None
 _decoder = None
+_model_ready = False   # True after background warm-up finishes
 
 def get_vgg():
     global _vgg
@@ -95,6 +99,27 @@ def get_fast_models():
         _decoder.load_state_dict(torch.load(DECODER_PATH, map_location=DEVICE, weights_only=False))
         for p in _decoder.parameters(): p.requires_grad_(False)
     return _encoder, _decoder
+
+def _warmup_models():
+    """Background thread: pre-load VGG-19 weights on startup so the first
+    user request is instant. Railway health checks hit /health which waits
+    for this flag before returning 200."""
+    global _model_ready
+    try:
+        print("[warmup] Pre-loading neural models…")
+        t0 = time.time()
+        if FAST_MODE:
+            get_fast_models()
+        else:
+            get_vgg()
+        _model_ready = True
+        print(f"[warmup] Models ready in {time.time() - t0:.1f}s")
+    except Exception as e:
+        print(f"[warmup] ERROR during model pre-load: {e}")
+        _model_ready = True  # allow health-check through so logs are visible
+
+# Start warm-up immediately in the background
+threading.Thread(target=_warmup_models, daemon=True).start()
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Fast inference
@@ -335,6 +360,14 @@ def info():
         "image_size": IMAGE_SIZE,
         "cuda":       torch.cuda.is_available(),
     })
+
+@app.route("/health")
+def health():
+    """Railway / Docker health-check endpoint.
+    Returns 200 only after model warm-up has finished."""
+    if _model_ready:
+        return jsonify({"status": "ready", "device": str(DEVICE)}), 200
+    return jsonify({"status": "loading", "message": "Neural models are loading, please wait…"}), 503
 
 # ─────────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":

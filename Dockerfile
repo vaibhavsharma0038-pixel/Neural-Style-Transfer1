@@ -20,4 +20,4 @@ RUN mkdir -p uploads output && chmod -R 777 uploads output
 
 EXPOSE 7860
 
-CMD ["sh", "-c", "gunicorn server:app --bind 0.0.0.0:${PORT:-7860} --workers 1 --threads 4 --timeout 180"]
+CMD ["sh", "-c", "gunicorn server:app --bind 0.0.0.0:${PORT:-7860} --workers 1 --threads 2 --timeout 300 --keep-alive 5"]
